@@ -69,4 +69,15 @@ const signout = async (req, res) => {
   }
 };
 
-module.exports = { signup, signin, signout };
+const deleteUser = async (req, res) => {
+  try {
+    // Delete the user from the database.
+    await User.findOneAndDelete({ email: req.body.email });
+    res.clearCookie('token'); // Clear the JWT token from the client.
+    sendResponse(res, 'Success', 200, 'User deleted successfully.', null, {});
+  } catch (error) {
+    sendResponse(res, 'Fail', 400, 'Error while deleting user.', error, null);
+  }
+};
+
+module.exports = { signup, signin, signout, deleteUser };
