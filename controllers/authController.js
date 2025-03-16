@@ -2,16 +2,24 @@ const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const { sendResponse } = require('../utils/utils');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 // Helper function to generate JWT token (expires in 1 hour)
 const generateToken = (user) => {
   return jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
 };
 
+const getGravatarUrl = (email, size = 80) => {
+  const trimmedEmail = email.trim().toLowerCase();
+  const hash = crypto.createHash('sha256').update(trimmedEmail).digest('hex');
+  return `https://www.gravatar.com/avatar/${hash}?s=${size}&d=identicon`;
+};
+
 const signup = async (req, res) => {
   try {
     const { name, email, password } = req.body; // Create a new user (password will be hashed automatically in the userModel.js file).
-    const newUser = await User.create({ name, email, password });
+    const photo = getGravatarUrl(email);
+    const newUser = await User.create({ name, email, photo, password });
 
     const token = generateToken(newUser); // Generate a JWT token (using user ID as payload).
     res.cookie('token', token, { httpOnly: true, maxAge: 3600000 });
