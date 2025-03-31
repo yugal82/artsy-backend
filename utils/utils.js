@@ -49,11 +49,11 @@ const generateXAPPToken = async () => {
   }
 };
 
-const fetchAndSendResponse = async (res, URL, message) => {
+const fetchResponse = async (res, URL, message) => {
   const token = await generateXAPPToken();
   const headers = { 'X-Xapp-Token': token };
   const response = await axios.get(URL, { headers });
-  sendResponse(res, 'Success', 200, message, null, response?.data);
+  return response.data;
 };
 
 // const cookieExtractor = (req) => {
@@ -62,4 +62,4 @@ const fetchAndSendResponse = async (res, URL, message) => {
 //   return token;
 // };
 
-module.exports = { sendResponse, fetchAndSendResponse, generateXAPPToken, ARTSY_BASE_URL };
+module.exports = { sendResponse, fetchResponse, generateXAPPToken, ARTSY_BASE_URL };

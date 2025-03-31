@@ -25,14 +25,16 @@
 //   }
 // };
 
-const { sendResponse, fetchAndSendResponse, ARTSY_BASE_URL } = require('../utils/utils');
+const { sendResponse, ARTSY_BASE_URL, fetchResponse } = require('../utils/utils');
 
 const getArtist = async (req, res) => {
   try {
     // https://api.artsy.net/api/search?q=picasso&size=10
     const URL = `${ARTSY_BASE_URL}search?q=${req.query?.q}&size=10`;
 
-    fetchAndSendResponse(res, URL, 'Artist fetched successfully');
+    const response = await fetchResponse(res, URL, 'Artist fetched successfully');
+    const data = response._embedded.results;
+    sendResponse(res, 'Success', 200, 'Successfully fetched artists', null, data);
   } catch (error) {
     sendResponse(res, 'Falied', 400, 'Failed to get artist', error, null);
   }
@@ -42,7 +44,8 @@ const getArtistDetails = async (req, res) => {
   try {
     // https://api.artsy.net/api/artists/4d8b928b4eb68a1b2c0001f2
     const URL = `${ARTSY_BASE_URL}artists/${req.params?.id}`;
-    fetchAndSendResponse(res, URL, 'Artist details fetched successfully');
+    const response = await fetchResponse(res, URL, 'Artist details fetched successfully');
+    sendResponse(res, 'Success', 200, 'Successfully fetched artists details', null, response);
   } catch (error) {
     sendResponse(res, 'Failed', 400, 'Failed to get artist details', error, null);
   }
@@ -52,7 +55,9 @@ const getSimilarArtists = async (req, res) => {
   try {
     // https://api.artsy.net/api/artists?similar_to_artist_id=4d8b928b4eb68a1b2c0001f2
     const URL = `${ARTSY_BASE_URL}artists?similar_to_artist_id=${req.params?.id}`;
-    fetchAndSendResponse(res, URL, 'Similar artists fetched successfully');
+    const response = await fetchResponse(res, URL, 'Similar artists fetched successfully');
+    const data = response._embedded.artists;
+    sendResponse(res, 'Success', 200, 'Successfully fetched similar artists', null, data);
   } catch (error) {
     sendResponse(res, 'Failed', 400, 'Failed to get similar artists', error, null);
   }
@@ -62,17 +67,21 @@ const getArtistArtworks = async (req, res) => {
   try {
     // https://api.artsy.net/api/artworks?artist_id=4d8b928b4eb68a1b2c0001f2&size=10
     const URL = `${ARTSY_BASE_URL}artworks?artist_id=${req.params?.id}&size=10`;
-    fetchAndSendResponse(res, URL, 'Artworks fetched successfully');
+    const response = await fetchResponse(res, URL, 'Artworks fetched successfully');
+    const data = response._embedded.artworks;
+    sendResponse(res, 'Success', 200, 'Successfully fetched Artworks', null, data);
   } catch (error) {
     sendResponse(res, 'Failed', 400, 'Failed to get artworks', error, null);
   }
 };
 
-const getArtworkGenes = (req, res) => {
+const getArtworkGenes = async (req, res) => {
   try {
     // https://api.artsy.net/api/genes?artwork_id=515b0f9338ad2d78ca000554
     const URL = `${ARTSY_BASE_URL}genes?artwork_id=${req.params?.id}`;
-    fetchAndSendResponse(res, URL, 'Artwork genes fetched successfully');
+    const response = await fetchResponse(res, URL, 'Artwork genes fetched successfully');
+    const data = response._embedded.genes;
+    sendResponse(res, 'Success', 200, 'Successfully fetched Categories', null, data);
   } catch (error) {
     sendResponse(res, 'Failed', 400, 'Failed to get artwork genes', error, null);
   }
